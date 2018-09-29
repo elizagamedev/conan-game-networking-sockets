@@ -1,0 +1,32 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a7e2b92..1f89f45 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,12 +1,8 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(GameNetworkingSockets C CXX)
+ 
+-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+-
+-include(FlagsMSVC)
+-set(MSVC_RUNTIME "dynamic")
+-configure_msvc_runtime()
+-print_default_msvc_flags()
++include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
++conan_basic_setup()
+ 
+ add_subdirectory(src)
+ add_subdirectory(tests)
+diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
+index 3efc4be..57bef95 100644
+--- a/tests/CMakeLists.txt
++++ b/tests/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ add_executable(
+ 	test_connection
+ 	test_connection.cpp)
+-target_link_libraries(test_connection GameNetworkingSockets)
++target_link_libraries(test_connection GameNetworkingSockets ${CONAN_LIBS})
+ 
+ #add_executable(
+ #	test_flat
