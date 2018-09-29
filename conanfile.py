@@ -19,16 +19,15 @@ class GameNetworkingSocketsConan(ConanFile):
     build_requires = "cmake_installer/3.11.1@conan/stable"
     exports = "*.patch"
 
-    def configure(self):
-        self.options["protobuf"].shared = True
-
     def source(self):
         self.run("git clone https://github.com/ValveSoftware/GameNetworkingSockets.git")
+        tools.patch("GameNetworkingSockets", patch_file="protobuf.patch")
         tools.patch("GameNetworkingSockets", patch_file="conan.patch")
 
     def build(self):
         with tools.environment_append({"LD_LIBRARY_PATH": self.deps_cpp_info["protobuf"].lib_paths}):
             cmake = CMake(self)
+            cmake.definitions["Protobuf_USE_STATIC_LIBS"] = not self.options["protobuf"].shared
             cmake.configure(source_folder="GameNetworkingSockets")
             cmake.build()
 

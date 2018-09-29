@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index a7e2b92..1f89f45 100644
+index 51686b3..9f6e115 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -1,12 +1,8 @@
@@ -15,8 +15,8 @@ index a7e2b92..1f89f45 100644
 +include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 +conan_basic_setup()
  
- add_subdirectory(src)
- add_subdirectory(tests)
+ option(Protobuf_USE_STATIC_LIBS "Build with a static Protobuf library" OFF)
+ 
 diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
 index 3efc4be..57bef95 100644
 --- a/tests/CMakeLists.txt
