@@ -21,7 +21,6 @@ class GameNetworkingSocketsConan(ConanFile):
 
     def source(self):
         self.run("git clone https://github.com/ValveSoftware/GameNetworkingSockets.git")
-        tools.patch("GameNetworkingSockets", patch_file="protobuf.patch")
         tools.patch("GameNetworkingSockets", patch_file="conan.patch")
 
     def build(self):
