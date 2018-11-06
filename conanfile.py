@@ -35,25 +35,23 @@ class GameNetworkingSocketsConan(ConanFile):
         tools.patch(self._source_subfolder, patch_file="conan.patch")
 
     def build(self):
-        with tools.environment_append({"LD_LIBRARY_PATH": self.deps_cpp_info["protobuf"].lib_paths}):
-            cmake = CMake(self)
-            cmake.definitions["Protobuf_USE_STATIC_LIBS"] = not self.options["protobuf"].shared
-            cmake.configure(build_folder=self._build_subfolder)
-            cmake.build()
+        cmake = CMake(self)
+        cmake.definitions["Protobuf_USE_STATIC_LIBS"] = not self.options["protobuf"].shared
+        cmake.configure(build_folder=self._build_subfolder)
+        cmake.build()
 
     def package(self):
         self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
         self.copy("*.h", dst="include", src=os.path.join(self._source_subfolder, "include"))
-        self.copy("*.pdb", dst="lib", keep_path=False)
-        if self.options.shared:
-            self.copy("*.dll", dst="bin", keep_path=False)
         # Copy correct lib
         if self.options.shared:
             libname = "GameNetworkingSockets"
         else:
             libname = "GameNetworkingSockets_s"
         if self.settings.compiler == "Visual Studio":
+            self.copy("*{}{}.dll".format(os.sep, libname), dst="bin", keep_path=False)
             self.copy("*{}{}.lib".format(os.sep, libname), dst="lib", keep_path=False)
+            self.copy("*{}{}.pdb".format(os.sep, libname), dst="lib", keep_path=False)
         else:
             self.copy("*{}lib{}.dylib".format(os.sep, libname), dst="lib", keep_path=False, symlinks=True)
             self.copy("*{}lib{}.so".format(os.sep, libname), dst="lib", keep_path=False, symlinks=True)

@@ -16,6 +16,18 @@ index 51686b3..14f1a13 100644
  option(Protobuf_USE_STATIC_LIBS "Build with a static Protobuf library" OFF)
  
  add_subdirectory(src)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 2276fba..ed54345 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -148,7 +148,6 @@ macro(gamenetworkingsockets_common GNS_TARGET)
+ 		if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+ 			target_compile_definitions(${GNS_TARGET} PRIVATE
+ 				_CRT_SECURE_NO_WARNINGS
+-				_ITERATOR_DEBUG_LEVEL=0
+ 			)
+ 			if(NOT Protobuf_USE_STATIC_LIBS)
+ 				target_compile_definitions(${GNS_TARGET} PRIVATE
 diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
 index 3efc4be..57bef95 100644
 --- a/tests/CMakeLists.txt
