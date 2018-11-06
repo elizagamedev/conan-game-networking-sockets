@@ -4,36 +4,47 @@ import os
 
 class GameNetworkingSocketsConan(ConanFile):
     name = "GameNetworkingSockets"
-    version = "0.0.0"
+    version = "20180929"
+    description = "Reliable & unreliable messages over UDP"
+    topics = ("conan", "udp", "network", "networking", "internet")
+    url = "https://github.com/bincrafters/conan-GameNetworkingSockets"
+    homepage = "https://github.com/ValveSoftware/GameNetworkingSockets"
+    author = "Bincrafters <bincrafters@gmail.com>"
     license = "BSD 3-Clause"
-    url = "https://github.com/elizagamedev/conan-GameNetworkingSockets"
-    description = "Reliable & unreliable messages over UDP. Message fragmentation & reassembly, bandwidth estimation, encryption."
+    exports = ["LICENSE.md"]
+    exports_sources = ["CMakeLists.txt", "conan.patch"]
+    generators = "cmake"
+
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = "shared=False"
-    generators = "cmake"
+
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
+    _commit = "85dc1cd4686355e4f8229d9c23607824f6a751ac"
+
     requires = (
         "OpenSSL/1.0.2o@conan/stable",
-        "protobuf/3.5.2@bincrafters/stable",
+        "protobuf/3.6.1@bincrafters/stable",
     )
     build_requires = "cmake_installer/3.11.1@conan/stable"
-    exports = "*.patch"
 
     def source(self):
-        self.run("git clone https://github.com/ValveSoftware/GameNetworkingSockets.git")
-        tools.patch("GameNetworkingSockets", patch_file="conan.patch")
+        tools.get("https://github.com/ValveSoftware/GameNetworkingSockets/archive/{}.tar.gz".format(self._commit))
+        os.rename("GameNetworkingSockets-" + self._commit, self._source_subfolder)
+        tools.patch(self._source_subfolder, patch_file="conan.patch")
 
     def build(self):
         with tools.environment_append({"LD_LIBRARY_PATH": self.deps_cpp_info["protobuf"].lib_paths}):
             cmake = CMake(self)
             cmake.definitions["Protobuf_USE_STATIC_LIBS"] = not self.options["protobuf"].shared
-            cmake.configure(source_folder="GameNetworkingSockets")
+            cmake.configure(build_folder=self._build_subfolder)
             cmake.build()
 
     def package(self):
-        self.copy("*.h", dst="include", src=os.path.join("GameNetworkingSockets", "include"))
+        self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
+        self.copy("*.h", dst="include", src=os.path.join(self._source_subfolder, "include"))
         self.copy("*.pdb", dst="lib", keep_path=False)
-        self.copy("*.dylib", dst="lib", keep_path=False)
         if self.options.shared:
             self.copy("*.dll", dst="bin", keep_path=False)
         # Copy correct lib
@@ -44,6 +55,7 @@ class GameNetworkingSocketsConan(ConanFile):
         if self.settings.compiler == "Visual Studio":
             self.copy("*{}{}.lib".format(os.sep, libname), dst="lib", keep_path=False)
         else:
+            self.copy("*{}lib{}.dylib".format(os.sep, libname), dst="lib", keep_path=False, symlinks=True)
             self.copy("*{}lib{}.so".format(os.sep, libname), dst="lib", keep_path=False, symlinks=True)
             self.copy("*{}lib{}.a".format(os.sep, libname), dst="lib", keep_path=False)
 

@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 51686b3..9f6e115 100644
+index 51686b3..14f1a13 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1,12 +1,8 @@
+@@ -1,13 +1,6 @@
  cmake_minimum_required(VERSION 3.5)
  project(GameNetworkingSockets C CXX)
  
@@ -12,11 +12,10 @@ index 51686b3..9f6e115 100644
 -set(MSVC_RUNTIME "dynamic")
 -configure_msvc_runtime()
 -print_default_msvc_flags()
-+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-+conan_basic_setup()
- 
+-
  option(Protobuf_USE_STATIC_LIBS "Build with a static Protobuf library" OFF)
  
+ add_subdirectory(src)
 diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
 index 3efc4be..57bef95 100644
 --- a/tests/CMakeLists.txt
